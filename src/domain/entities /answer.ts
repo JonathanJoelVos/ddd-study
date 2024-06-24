@@ -10,6 +10,15 @@ interface AnswerProps {
 }
 
 export class Answer extends Entity<AnswerProps> {
+  static create(props: AnswerProps): Answer {
+    return new Answer({
+      authorId: props.authorId,
+      content: props.content,
+      createdAt: props.createdAt,
+      questionId: props.questionId,
+    });
+  }
+
   get content() {
     return this.props.content;
   }

@@ -18,10 +18,12 @@ export class AnswerQuestionUseCase {
     instructorId,
     questionId,
   }: AnswerQuestionUseCaseRequest) {
-    const answer = new Answer({
+    const answer = Answer.create({
       authorId: new UniqueEntityID(instructorId),
       questionId: new UniqueEntityID(questionId),
       content,
+      createdAt: new Date(),
+      updatedAt: new Date(),
     });
     this.anwsersRepository.save(answer);
     return answer;

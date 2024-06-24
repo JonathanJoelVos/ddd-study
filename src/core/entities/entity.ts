@@ -11,7 +11,8 @@ export class Entity<T> {
     return this._id;
   }
 
-  constructor(props: T, id?: string) {
+  //colocamos protected para que só as classes que extendem possam usar ele isso faz com que se usarmos um Answer extends Entity e fizermos um método static create { return new Answer()} isso força com que seja obrigatório usar o método create para instanciar a Answer (já que não é possível instanciar a Answer pois ela usa o construtor de Entity apenas)
+  protected constructor(props: T, id?: string) {
     this._id = new UniqueEntityID(id);
     this.props = props;
   }
