@@ -1,11 +1,10 @@
-import { randomUUID } from "crypto";
+import { Entity } from "../../core/entities/entity";
 
-export class Student {
-  public id: string;
+export class Student extends Entity {
   public name: string;
 
   constructor(name: string, id?: string) {
+    super(id);
     this.name = name;
-    this.id = id ?? randomUUID();
   }
 }
