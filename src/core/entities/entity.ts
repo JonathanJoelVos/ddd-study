@@ -1,10 +1,10 @@
 //Essa classe é uma classe que todas entidades do nosso programa extendem
 // usamos ela para manter e padronizar partes que se repetem em todas entidades como id, construtor...
 
-import { randomUUID } from "node:crypto";
+import { UniqueEntityID } from "./unique-entity-id";
 
 export class Entity<T> {
-  private _id: string;
+  private _id: UniqueEntityID;
   protected props: T;
 
   get id() {
@@ -12,7 +12,7 @@ export class Entity<T> {
   }
 
   constructor(props: T, id?: string) {
-    this._id = id ?? randomUUID();
+    this._id = new UniqueEntityID(id);
     this.props = props;
   }
 }

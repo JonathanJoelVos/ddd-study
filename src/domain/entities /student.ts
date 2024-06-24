@@ -4,4 +4,8 @@ interface StudentProps {
   name: string;
 }
 
-export class Student extends Entity<StudentProps> {}
+export class Student extends Entity<StudentProps> {
+  get name() {
+    return this.props.name;
+  }
+}

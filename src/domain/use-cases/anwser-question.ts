@@ -1,3 +1,4 @@
+import { UniqueEntityID } from "../../core/entities/unique-entity-id";
 import { Anwser } from "../entities /answer";
 import { AnwsersRepository } from "../repositories/anwsers-repository";
 
@@ -18,8 +19,8 @@ export class AnwserQuestionUseCase {
     questionId,
   }: AnwserQuestionUseCaseRequest) {
     const anwser = new Anwser({
-      authorId: instructorId,
-      questionId,
+      authorId: new UniqueEntityID(instructorId),
+      questionId: new UniqueEntityID(questionId),
       content,
     });
     this.anwsersRepository.save(anwser);
