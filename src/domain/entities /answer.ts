@@ -1,13 +1,15 @@
 import { Entity } from "../../core/entities/entity";
 import { UniqueEntityID } from "../../core/entities/unique-entity-id";
 
-interface AnwserProps {
+interface AnswerProps {
   content: string;
   authorId: UniqueEntityID;
   questionId: UniqueEntityID;
+  createdAt: Date;
+  updatedAt?: Date;
 }
 
-export class Anwser extends Entity<AnwserProps> {
+export class Answer extends Entity<AnswerProps> {
   get content() {
     return this.props.content;
   }
