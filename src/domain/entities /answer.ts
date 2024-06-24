@@ -6,8 +6,4 @@ interface AnwserProps {
   questionId: string;
 }
 
-export class Anwser extends Entity<AnwserProps> {
-  constructor(props: AnwserProps, id?: string) {
-    super(props, id);
-  }
-}
+export class Anwser extends Entity<AnwserProps> {}
