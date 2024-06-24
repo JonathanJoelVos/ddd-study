@@ -6,15 +6,8 @@ interface AnwserProps {
   questionId: string;
 }
 
-export class Anwser extends Entity {
-  public content: string;
-  public authorId: string;
-  public questionId: string;
-
+export class Anwser extends Entity<AnwserProps> {
   constructor(props: AnwserProps, id?: string) {
-    super(id);
-    this.content = props.content;
-    this.authorId = props.authorId;
-    this.questionId = props.questionId;
+    super(props, id);
   }
 }
