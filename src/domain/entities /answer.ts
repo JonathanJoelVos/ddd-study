@@ -11,11 +11,17 @@ interface AnswerProps {
 }
 
 export class Answer extends Entity<AnswerProps> {
-  static create(props: Optional<AnswerProps, "createdAt">): Answer {
-    return new Answer({
-      ...props,
-      createdAt: props.createdAt ?? new Date(),
-    });
+  static create(
+    props: Optional<AnswerProps, "createdAt">,
+    id?: UniqueEntityID
+  ): Answer {
+    return new Answer(
+      {
+        ...props,
+        createdAt: props.createdAt ?? new Date(),
+      },
+      id
+    );
   }
 
   get content() {
@@ -28,5 +34,25 @@ export class Answer extends Entity<AnswerProps> {
 
   get questionId() {
     return this.props.questionId;
+  }
+  get createdAt() {
+    return this.props.createdAt;
+  }
+
+  get updatedAt() {
+    return this.props.updatedAt;
+  }
+
+  get excerpt() {
+    return this.props.content.substring(0, 120).trimEnd().concat("...");
+  }
+
+  private touch() {
+    this.props.updatedAt = new Date();
+  }
+
+  set content(content: string) {
+    this.props.content = content;
+    this.touch();
   }
 }
