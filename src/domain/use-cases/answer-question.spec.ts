@@ -1,4 +1,3 @@
-import { describe, expect, it } from "vitest";
 import { AnswerQuestionUseCase } from "./answer-question";
 import { AnswerRepository } from "../repositories/answers-repository";
 
