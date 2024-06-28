@@ -1,35 +1,27 @@
-import { Slug } from "./value-objects/slug";
 import { Entity } from "@/core/entities/entity";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { Optional } from "@/core/types/optional";
-import dayjs from "dayjs";
 
-interface QuestionProps {
-  title: string;
+export interface AnswerProps {
   content: string;
   authorId: UniqueEntityID;
-  slug: Slug;
-  bestAnswerId?: UniqueEntityID;
+  questionId: UniqueEntityID;
   createdAt: Date;
   updatedAt?: Date;
 }
 
-export class Question extends Entity<QuestionProps> {
+export class Answer extends Entity<AnswerProps> {
   static create(
-    props: Optional<QuestionProps, "createdAt" | "slug">,
+    props: Optional<AnswerProps, "createdAt">,
     id?: UniqueEntityID
-  ) {
-    return new Question(
+  ): Answer {
+    return new Answer(
       {
         ...props,
         createdAt: props.createdAt ?? new Date(),
-        slug: props.slug ?? Slug.createFromText(props.title),
       },
       id
     );
-  }
-  get title() {
-    return this.props.title;
   }
 
   get content() {
@@ -40,12 +32,8 @@ export class Question extends Entity<QuestionProps> {
     return this.props.authorId;
   }
 
-  get slug() {
-    return this.props.slug;
-  }
-
-  get bestAnswerId() {
-    return this.props.bestAnswerId;
+  get questionId() {
+    return this.props.questionId;
   }
   get createdAt() {
     return this.props.createdAt;
@@ -55,9 +43,6 @@ export class Question extends Entity<QuestionProps> {
     return this.props.updatedAt;
   }
 
-  get isNew(): boolean {
-    return dayjs().diff(this.props.createdAt, "days") <= 3;
-  }
   get excerpt() {
     return this.props.content.substring(0, 120).trimEnd().concat("...");
   }
@@ -69,15 +54,5 @@ export class Question extends Entity<QuestionProps> {
   set content(content: string) {
     this.props.content = content;
     this.touch();
-  }
-
-  set title(title: string) {
-    this.props.title = title;
-    this.props.slug = Slug.createFromText(title);
-    this.touch();
-  }
-
-  set bestAnswerId(bestAnswerId: UniqueEntityID | undefined) {
-    this.props.bestAnswerId = bestAnswerId;
   }
 }
