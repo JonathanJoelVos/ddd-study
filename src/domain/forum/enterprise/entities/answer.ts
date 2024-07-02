@@ -46,7 +46,6 @@ export class Answer extends Entity<AnswerProps> {
   get excerpt() {
     return this.props.content.substring(0, 120).trimEnd().concat("...");
   }
-
   private touch() {
     this.props.updatedAt = new Date();
   }

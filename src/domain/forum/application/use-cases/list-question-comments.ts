@@ -1,17 +1,21 @@
+import { Either, left, right } from "@/core/either";
 import { Answer } from "../../enterprise/entities/answer";
 import { QuestionComment } from "../../enterprise/entities/question-comment";
-import { AnswersRepository } from "../repositories/answers-repository";
 import { QuestionCommentsRepository } from "../repositories/question-comments-repository";
 import { QuestionsRepository } from "../repositories/questions-repository";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 
 interface ListQuestionCommentsUseCaseRequest {
   page: number;
   questionId: string;
 }
 
-interface ListQuestionCommentsUseCaseResponse {
-  questionComments: QuestionComment[];
-}
+type ListQuestionCommentsUseCaseResponse = Either<
+  ResourceNotFoundError,
+  {
+    questionComments: QuestionComment[];
+  }
+>;
 
 export class ListQuestionCommentsUseCase {
   constructor(
@@ -26,7 +30,7 @@ export class ListQuestionCommentsUseCase {
     const question = await this.questionsRepository.findById(questionId);
 
     if (!question) {
-      throw new Error("Not found");
+      return left(new ResourceNotFoundError());
     }
 
     const questionComments =
@@ -34,10 +38,8 @@ export class ListQuestionCommentsUseCase {
         page,
       });
 
-    console.log(questionComments, "questionComments");
-
-    return {
+    return right({
       questionComments,
-    };
+    });
   }
 }

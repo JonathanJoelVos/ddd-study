@@ -1,16 +1,21 @@
+import { Either, left, right } from "@/core/either";
 import { Answer } from "../../enterprise/entities/answer";
 import { Question } from "../../enterprise/entities/question";
 import { AnswersRepository } from "../repositories/answers-repository";
 import { QuestionsRepository } from "../repositories/questions-repository";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 
 interface ListQuestionsAnswersUseCaseRequest {
   page: number;
   questionId: string;
 }
 
-interface ListQuestionsAnswersUseCaseResponse {
-  answers: Answer[];
-}
+type ListQuestionsAnswersUseCaseResponse = Either<
+  ResourceNotFoundError,
+  {
+    answers: Answer[];
+  }
+>;
 
 export class ListQuestionsAnswersUseCase {
   constructor(
@@ -25,7 +30,7 @@ export class ListQuestionsAnswersUseCase {
     const question = await this.questionsRepository.findById(questionId);
 
     if (!question) {
-      throw new Error("Not found");
+      return left(new ResourceNotFoundError());
     }
 
     const answers = await this.answersRepository.findManyByQuestionId(
@@ -35,8 +40,8 @@ export class ListQuestionsAnswersUseCase {
       }
     );
 
-    return {
+    return right({
       answers,
-    };
+    });
   }
 }

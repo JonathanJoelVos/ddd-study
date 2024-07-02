@@ -22,15 +22,18 @@ describe("Create Question use case", () => {
     const question = makeQuestion({}, new UniqueEntityID("question-1"));
     await inMemoryQuestionsRepository.save(question);
 
-    const { questionComment } = await sut.execute({
+    const result = await sut.execute({
       content: "teste",
       authorId: "test-id",
       questionId: "question-1",
     });
 
-    expect(questionComment.id).toBeTruthy();
-    expect(inMemoryQuestionCommentsRepository.items[0].id).toEqual(
-      questionComment.id
-    );
+    expect(result.isRight()).toBe(true);
+
+    if (result.isRight()) {
+      expect(inMemoryQuestionCommentsRepository.items[0].id).toEqual(
+        result.value.questionComment.id
+      );
+    }
   });
 });

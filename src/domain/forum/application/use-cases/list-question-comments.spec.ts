@@ -7,6 +7,8 @@ import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { InMemoryQuestionCommentsRepository } from "test/repositories/in-memory-question-comments-repository";
 import { ListQuestionCommentsUseCase } from "./list-question-comments";
 import { makeQuestionComment } from "test/factories/make-question-comment";
+import { NotAllowedError } from "./errors/not-allowed-error";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository;
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
@@ -42,12 +44,15 @@ describe("Create Answer use case", () => {
       })
     );
 
-    const { questionComments } = await sut.execute({
+    const result = await sut.execute({
       questionId: question.id.toString(),
       page: 1,
     });
 
-    expect(questionComments).toHaveLength(3);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.questionComments).toHaveLength(3);
+    }
   });
   it("should be able to list paginated recents answers", async () => {
     const question = makeQuestion({}, new UniqueEntityID("question-1"));
@@ -61,12 +66,14 @@ describe("Create Answer use case", () => {
       );
     }
 
-    const { questionComments } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       questionId: question.id.toString(),
     });
-
-    expect(questionComments).toHaveLength(2);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.questionComments).toHaveLength(2);
+    }
   });
   it("not should be able to list recents answers with not exists question", async () => {
     const question = makeQuestion({}, new UniqueEntityID("question-2"));
@@ -78,11 +85,12 @@ describe("Create Answer use case", () => {
       })
     );
 
-    expect(async () => {
-      await sut.execute({
-        page: 2,
-        questionId: "question-1",
-      });
-    }).rejects.toBeInstanceOf(Error);
+    const result = await sut.execute({
+      page: 2,
+      questionId: "question-1",
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });

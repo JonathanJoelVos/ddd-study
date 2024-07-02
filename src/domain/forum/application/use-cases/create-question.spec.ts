@@ -10,13 +10,17 @@ describe("Create Question use case", () => {
     sut = new CreateQuestionUseCase(inMemoryQuestionsRepository);
   });
   it("should be able to create an question", async () => {
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       content: "teste",
       authorId: "test-id",
       title: "test-id",
     });
 
-    expect(question.id).toBeTruthy();
-    expect(inMemoryQuestionsRepository.items[0].id).toEqual(question.id);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(inMemoryQuestionsRepository.items[0].id).toEqual(
+        result.value.question.id
+      );
+    }
   });
 });

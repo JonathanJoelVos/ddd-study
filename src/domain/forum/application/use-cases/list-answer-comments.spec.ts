@@ -4,6 +4,7 @@ import { ListAnswerCommentsUseCase } from "./list-answer-comments";
 import { makeAnswerComment } from "test/factories/make-answer-comment";
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { makeAnswer } from "test/factories/make-answer";
+import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository;
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
@@ -38,12 +39,15 @@ describe("Create Answer use case", () => {
       })
     );
 
-    const { answerComments } = await sut.execute({
+    const result = await sut.execute({
       answerId: answer.id.toString(),
       page: 1,
     });
 
-    expect(answerComments).toHaveLength(3);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.answerComments).toHaveLength(3);
+    }
   });
   it("should be able to list paginated recents answers", async () => {
     const answer = makeAnswer({}, new UniqueEntityID("answer-1"));
@@ -57,12 +61,15 @@ describe("Create Answer use case", () => {
       );
     }
 
-    const { answerComments } = await sut.execute({
+    const result = await sut.execute({
       page: 2,
       answerId: answer.id.toString(),
     });
 
-    expect(answerComments).toHaveLength(2);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.answerComments).toHaveLength(2);
+    }
   });
   it("not should be able to list recents answers with not exists answer", async () => {
     const answer = makeAnswer({}, new UniqueEntityID("answer-2"));
@@ -74,11 +81,12 @@ describe("Create Answer use case", () => {
       })
     );
 
-    expect(async () => {
-      await sut.execute({
-        page: 2,
-        answerId: "answer-1",
-      });
-    }).rejects.toBeInstanceOf(Error);
+    const result = await sut.execute({
+      page: 2,
+      answerId: "answer-1",
+    });
+
+    expect(result.isLeft()).toBe(true);
+    expect(result.value).toBeInstanceOf(ResourceNotFoundError);
   });
 });

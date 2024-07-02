@@ -21,15 +21,18 @@ describe("Create Answer use case", () => {
     const answer = makeAnswer({}, new UniqueEntityID("answer-1"));
     await inMemoryAnswersRepository.save(answer);
 
-    const { answerComment } = await sut.execute({
+    const result = await sut.execute({
       content: "teste",
       authorId: "test-id",
       answerId: "answer-1",
     });
 
-    expect(answerComment.id).toBeTruthy();
-    expect(inMemoryAnswerCommentsRepository.items[0].id).toEqual(
-      answerComment.id
-    );
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(inMemoryAnswerCommentsRepository.items[0].id).toEqual(
+        result.value.answerComment.id
+      );
+    }
+    expect(inMemoryAnswerCommentsRepository.items[0].content).toEqual("teste");
   });
 });

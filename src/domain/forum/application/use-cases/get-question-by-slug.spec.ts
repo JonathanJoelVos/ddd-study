@@ -19,11 +19,13 @@ describe("Create Question use case", () => {
     });
     await inMemoryQuestionsRepository.save(newQuestion);
 
-    const { question } = await sut.execute({
+    const result = await sut.execute({
       slug: "example-slug",
     });
 
-    expect(question.id).toBeTruthy();
-    expect(question.id).toEqual(newQuestion.id);
+    expect(result.isRight()).toBe(true);
+    if (result.isRight()) {
+      expect(result.value.question.id).toEqual(newQuestion.id);
+    }
   });
 });
