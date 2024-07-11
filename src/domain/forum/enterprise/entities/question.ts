@@ -59,6 +59,10 @@ export class Question extends AggregateRoot<QuestionProps> {
     return this.props.updatedAt;
   }
 
+  get attachments() {
+    return this.props.attachments;
+  }
+
   get isNew(): boolean {
     return dayjs().diff(this.props.createdAt, "days") <= 3;
   }
@@ -83,5 +87,9 @@ export class Question extends AggregateRoot<QuestionProps> {
 
   set bestAnswerId(bestAnswerId: UniqueEntityID | undefined) {
     this.props.bestAnswerId = bestAnswerId;
+  }
+
+  set attachments(attachments: QuestionAttachment[]) {
+    this.props.attachments = attachments;
   }
 }
