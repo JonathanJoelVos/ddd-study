@@ -1,13 +1,9 @@
-import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
-import { makeAnswer } from "test/factories/make-answer";
-import { ListQuestionsAnswersUseCase } from "./list-questions-answers";
 import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questions-repository";
 import { makeQuestion } from "test/factories/make-question";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { InMemoryQuestionCommentsRepository } from "test/repositories/in-memory-question-comments-repository";
 import { ListQuestionCommentsUseCase } from "./list-question-comments";
 import { makeQuestionComment } from "test/factories/make-question-comment";
-import { NotAllowedError } from "./errors/not-allowed-error";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
 import { InMemoryQuestionAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
 

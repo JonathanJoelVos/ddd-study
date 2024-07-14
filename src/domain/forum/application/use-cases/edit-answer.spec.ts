@@ -3,29 +3,64 @@ import { EditAnswerUseCase } from "./edit-answer";
 import { makeAnswer } from "test/factories/make-answer";
 import { UniqueEntityID } from "@/core/entities/unique-entity-id";
 import { NotAllowedError } from "./errors/not-allowed-error";
+import { InMemoryAnswerAttachmentsRepository } from "test/repositories/in-memory-answer-attachments-repository";
+import { makeAnswerAttachment } from "test/factories/make-answer-attachment";
 
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
+
 let sut: EditAnswerUseCase;
 
 describe("Edit Answer use case", () => {
   beforeEach(() => {
-    inMemoryAnswersRepository = new InMemoryAnswersRepository();
-    sut = new EditAnswerUseCase(inMemoryAnswersRepository);
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository
+    );
+    sut = new EditAnswerUseCase(
+      inMemoryAnswersRepository,
+      inMemoryAnswerAttachmentsRepository
+    );
   });
   it("should be able to edit an answer", async () => {
     const answer = makeAnswer({});
 
     await inMemoryAnswersRepository.save(answer);
+    inMemoryAnswerAttachmentsRepository.createMany([
+      makeAnswerAttachment({
+        answerId: answer.id,
+        attachmentId: new UniqueEntityID("1"),
+      }),
+      makeAnswerAttachment({
+        answerId: answer.id,
+        attachmentId: new UniqueEntityID("2"),
+      }),
+    ]);
 
     await sut.execute({
       authorId: answer.authorId.toString(),
       answerId: answer.id.toString(),
       content: "new content",
+      attachmentsIds: ["1", "3"],
     });
 
     expect(inMemoryAnswersRepository.items[0]).toMatchObject({
       content: "new content",
     });
+    expect(
+      inMemoryAnswersRepository.items[0].attachments.currentItems
+    ).toHaveLength(2);
+    expect(inMemoryAnswersRepository.items[0].attachments.currentItems).toEqual(
+      [
+        expect.objectContaining({
+          attachmentId: new UniqueEntityID("1"),
+        }),
+        expect.objectContaining({
+          attachmentId: new UniqueEntityID("3"),
+        }),
+      ]
+    );
   });
   it("should not be able to edit a answer from another user", async () => {
     const answer = makeAnswer({
@@ -38,6 +73,7 @@ describe("Edit Answer use case", () => {
       authorId: "author-2",
       content: "content",
       answerId: answer.id.toString(),
+      attachmentsIds: [],
     });
 
     expect(result.isLeft()).toBe(true);

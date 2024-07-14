@@ -5,15 +5,21 @@ import { makeAnswerComment } from "test/factories/make-answer-comment";
 import { InMemoryAnswersRepository } from "test/repositories/in-memory-answers-repository";
 import { makeAnswer } from "test/factories/make-answer";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+import { InMemoryAnswerAttachmentsRepository } from "test/repositories/in-memory-answer-attachments-repository";
 
 let inMemoryAnswerCommentsRepository: InMemoryAnswerCommentsRepository;
 let inMemoryAnswersRepository: InMemoryAnswersRepository;
+let inMemoryAnswerAttachmentsRepository: InMemoryAnswerAttachmentsRepository;
 let sut: ListAnswerCommentsUseCase;
 
 describe("Create Answer use case", () => {
   beforeEach(() => {
     inMemoryAnswerCommentsRepository = new InMemoryAnswerCommentsRepository();
-    inMemoryAnswersRepository = new InMemoryAnswersRepository();
+    inMemoryAnswerAttachmentsRepository =
+      new InMemoryAnswerAttachmentsRepository();
+    inMemoryAnswersRepository = new InMemoryAnswersRepository(
+      inMemoryAnswerAttachmentsRepository
+    );
     sut = new ListAnswerCommentsUseCase(
       inMemoryAnswersRepository,
       inMemoryAnswerCommentsRepository
