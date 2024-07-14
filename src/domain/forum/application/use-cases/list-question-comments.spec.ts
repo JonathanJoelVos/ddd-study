@@ -9,16 +9,22 @@ import { ListQuestionCommentsUseCase } from "./list-question-comments";
 import { makeQuestionComment } from "test/factories/make-question-comment";
 import { NotAllowedError } from "./errors/not-allowed-error";
 import { ResourceNotFoundError } from "./errors/resource-not-found-error";
+import { InMemoryQuestionAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
 
 let inMemoryQuestionCommentsRepository: InMemoryQuestionCommentsRepository;
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 let sut: ListQuestionCommentsUseCase;
 
 describe("Create Answer use case", () => {
   beforeEach(() => {
+    let inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
     inMemoryQuestionCommentsRepository =
       new InMemoryQuestionCommentsRepository();
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository
+    );
     sut = new ListQuestionCommentsUseCase(
       inMemoryQuestionsRepository,
       inMemoryQuestionCommentsRepository

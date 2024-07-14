@@ -1,13 +1,19 @@
 import { InMemoryQuestionsRepository } from "test/repositories/in-memory-questions-repository";
 import { makeQuestion } from "test/factories/make-question";
 import { ListRecentsQuestionsUseCase } from "./list-recents-questions";
+import { InMemoryQuestionAttachmentsRepository } from "test/repositories/in-memory-question-attachments-repository";
 
 let inMemoryQuestionsRepository: InMemoryQuestionsRepository;
 let sut: ListRecentsQuestionsUseCase;
+let inMemoryQuestionAttachmentsRepository: InMemoryQuestionAttachmentsRepository;
 
 describe("Create Question use case", () => {
   beforeEach(() => {
-    inMemoryQuestionsRepository = new InMemoryQuestionsRepository();
+    inMemoryQuestionAttachmentsRepository =
+      new InMemoryQuestionAttachmentsRepository();
+    inMemoryQuestionsRepository = new InMemoryQuestionsRepository(
+      inMemoryQuestionAttachmentsRepository
+    );
     sut = new ListRecentsQuestionsUseCase(inMemoryQuestionsRepository);
   });
   it("should be able to list recents questions", async () => {
