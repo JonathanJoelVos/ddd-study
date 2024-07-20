@@ -1,3 +1,4 @@
+import { DomainEvents } from "@/core/events/domain-events";
 import { PaginationParams } from "@/core/repositories/pagination-params";
 import { QuestionAttachmentsRepository } from "@/domain/forum/application/repositories/question-attachments-repository";
 import { QuestionsRepository } from "@/domain/forum/application/repositories/questions-repository";
@@ -16,6 +17,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     this.questionAttachmentsRepository.createMany(
       question.attachments.currentItems
     );
+    DomainEvents.dispatchEventsForAggregate(question.id);
   }
 
   async findBySlug(slug: Slug) {
@@ -50,6 +52,7 @@ export class InMemoryQuestionsRepository implements QuestionsRepository {
     const index = this.items.findIndex((item) => item.id === question.id);
 
     this.items[index] = question;
+    DomainEvents.dispatchEventsForAggregate(question.id);
   }
 
   async findManyRecents({ page }: PaginationParams) {
